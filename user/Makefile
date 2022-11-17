@@ -29,6 +29,7 @@ endif
 ELFS := $(patsubst $(APP_DIR)/%.rs, $(TARGET_DIR)/%, $(APPS))
 
 binary:
+	sleep 1
 	@echo $(ELFS)
 	@if [ ${CHAPTER} -gt 3 ]; then \
 		cargo build --release ;\
@@ -39,12 +40,18 @@ binary:
 		$(OBJCOPY) $(elf) --strip-all -O binary $(patsubst $(TARGET_DIR)/%, $(TARGET_DIR)/%.bin, $(elf)); \
 		cp $(elf) $(patsubst $(TARGET_DIR)/%, $(TARGET_DIR)/%.elf, $(elf));)
 
+tmp_bin:
+	@$(foreach elf, $(ELFS), \
+		$(OBJCOPY) $(elf) --strip-all -O binary $(patsubst $(TARGET_DIR)/%, $(TARGET_DIR)/%.bin, $(elf)); \
+		cp $(elf) $(patsubst $(TARGET_DIR)/%, $(TARGET_DIR)/%.elf, $(elf));)
+
 disasm:
 	@$(foreach elf, $(ELFS), \
 		$(OBJDUMP) $(elf) -S > $(patsubst $(TARGET_DIR)/%, $(TARGET_DIR)/%.asm, $(elf));)
 	@$(foreach t, $(ELFS), cp $(t).asm $(BUILD_DIR)/asm/;)
 
 pre:
+	sleep 1
 	@mkdir -p $(BUILD_DIR)/bin/
 	@mkdir -p $(BUILD_DIR)/elf/
 	@mkdir -p $(BUILD_DIR)/app/

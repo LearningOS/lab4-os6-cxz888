@@ -3,15 +3,13 @@
 use super::TaskContext;
 use super::{pid_alloc, KernelStack, PidHandle};
 use crate::config::TRAP_CONTEXT;
+use crate::fs::{File, Stdin, Stdout};
 use crate::mm::{MemorySet, PhysPageNum, VirtAddr, KERNEL_SPACE};
 use crate::sync::UPSafeCell;
 use crate::trap::{trap_handler, TrapContext};
 use alloc::sync::{Arc, Weak};
 use alloc::vec::Vec;
 use core::cell::RefMut;
-use crate::fs::{File, Stdin, Stdout};
-use alloc::string::String;
-use crate::mm::translated_refmut;
 
 /// Task control block structure
 ///
@@ -72,8 +70,7 @@ impl TaskControlBlockInner {
         self.get_status() == TaskStatus::Zombie
     }
     pub fn alloc_fd(&mut self) -> usize {
-        if let Some(fd) = (0..self.fd_table.len())
-            .find(|fd| self.fd_table[*fd].is_none()) {
+        if let Some(fd) = (0..self.fd_table.len()).find(|fd| self.fd_table[*fd].is_none()) {
             fd
         } else {
             self.fd_table.push(None);

@@ -19,10 +19,9 @@
 #![no_main]
 #![feature(panic_info_message)]
 #![feature(alloc_error_handler)]
+#![feature(step_trait)]
 
-#[macro_use]
 extern crate bitflags;
-#[macro_use]
 extern crate log;
 
 extern crate alloc;
@@ -30,6 +29,8 @@ extern crate alloc;
 #[macro_use]
 mod console;
 mod config;
+mod drivers;
+mod fs;
 mod lang_items;
 mod logging;
 mod mm;
@@ -39,8 +40,6 @@ mod syscall;
 mod task;
 mod timer;
 mod trap;
-mod drivers;
-mod fs;
 
 core::arch::global_asm!(include_str!("entry.asm"));
 
@@ -70,5 +69,5 @@ pub fn rust_main() -> ! {
     fs::list_apps();
     task::add_initproc();
     task::run_tasks();
-    panic!("Unreachable in rust_main!");
+    // unreachable!("Unreachable in rust_main!");
 }
